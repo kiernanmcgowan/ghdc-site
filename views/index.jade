@@ -1,5 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  .row
+    .hero-unit.span12
+      h1 Analysis of value statments of GitHub repos
+      small Text analytics for men
+  .row
+    .span3
+        form.form-inline
+          input(placeholder='Filter', type='text')
+    .span9
+        p The charts go here

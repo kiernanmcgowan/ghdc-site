@@ -3,15 +3,28 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , http = require('http')
-  , path = require('path');
+var express = require('express'),
+    routes = require('./routes'),
+    http = require('http'),
+    path = require('path'),
+    shove = require('shove');
 
 var app = express();
 
-app.configure(function(){
+// set up the client code
+shove.init();
+
+// create the bundle
+shove.createBundle(__dirname + '/public/javascripts/main.js', [
+    __dirname + '/public/javascripts/models/',
+    __dirname + '/public/javascripts/views/',
+    __dirname + '/public/javascripts/templates/'
+  ], function(bundle) {
+    console.log('loaddd');
+    app.use(bundle);
+});
+
+app.configure(function() {
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -20,16 +33,23 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
+  app.use(require('less-middleware')({src: __dirname + '/public'}));
+  app.use(require('stylus')({src: __dirname + '/public'}));
+  app.use(shove.middleware);
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
-app.configure('development', function(){
+app.configure('development', function() {
   app.use(express.errorHandler());
 });
 
 app.get('/', routes.index);
-app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+app.get('/d3.js', function(req, res) {
+  var d3Loc = require.resolve('d3');
+  res.sendfile(path.dirname(d3Loc) + '/d3.min.js');
+});
+
+http.createServer(app).listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + app.get('port'));
 });
