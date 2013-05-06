@@ -1,6 +1,4 @@
 // main.js
-// js for site
-
-console.log('site is loaded');
-
-require('./views/app')()
+var appView = require('./views/app');
+app = new appView();
+app.render();
