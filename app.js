@@ -7,7 +7,8 @@ var express = require('express'),
     routes = require('./routes'),
     http = require('http'),
     path = require('path'),
-    shove = require('shove');
+    shove = require('shove'),
+    data = require('./lib/data');
 
 var app = express();
 
@@ -59,15 +60,21 @@ var server = http.createServer(app).listen(app.get('port'), function() {
 var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function(socket) {
-  socket.on('model-sync', function(data, cb) {
-    console.log('sync sync');
-    cb(null, {list: [
-          {word: 'Javascript', count: 100},
-          {word: 'Javascript1', count: 80},
-          {word: 'Javascript2', count: 60},
-          {word: 'Javascript3', count: 40},
-          {word: 'Javascript4', count: 20}
-        ]});
+  socket.on('model-sync', function(payload, cb) {
+    console.log(payload);
+    if (payload.type === 'data') {
+      data.getTopWords(payload.data, function(err, res) {
+        console.log('calling back');
+        cb(err, res);
+      });
+    } else if (payload.type == 'filter') {
+      data.getLang(function(err, res) {
+        cb(err, res);
+      });
+    } else {
+      cb({err: 'unknown type: ' + payload.type});
+    }
+
+
   });
-  console.log('connected');
 });

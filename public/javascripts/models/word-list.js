@@ -5,7 +5,7 @@ var _ = require('underscore');
 
 module.exports = Backbone.Model.extend({
 
-  url: 'words',
+  url: 'data',
 
   sync: require('../utils/sync'),
 
