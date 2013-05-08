@@ -27,18 +27,28 @@ module.exports = Backbone.View.extend({
     tbody.empty();
     var self = this;
     var mm = this.model.get('mm');
-    console.log(mm);
+
+    // sort putput real quick
+    output = _.sortBy(output, function(o) {
+      return -1 * o.val;
+    });
+
     _.each(output, function(obj) {
       obj.res = '';
+      obj.title = '';
       if (mm) {
         if (obj.val > mm.mean) {
           obj.res = 'success';
+          obj.title = 'This word is above the mean, it should be helpful!';
         } else if (obj.val < mm.median) {
           obj.res = 'error';
+          obj.title = 'This word is below the median, try and find a better one!';
         }
       }
       tbody.append($(self.lineTemplate(obj)));
     });
+
+    this.$el.find('tr').tooltip();
   }
 
 });

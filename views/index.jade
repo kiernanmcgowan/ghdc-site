@@ -4,14 +4,18 @@ block content
   .row
     .span12
       .hero-unit
-        h1 Analysis of value statments of GitHub repos
-        small Text analytics for men
+        h1 What is important to GitHub?
+        small An interactive demo of how repository descriptions change with language
   .row
-    .span3
-      p Collapseable copy explaining the project, and giving a way for people to get an overview
-    .span3
-      p Some more copy
-    .span3
+    .span4
+      h4 Overview
+      p Taking the large amount of data from the GitHubArchive project,
+    .span4
+      h4 Data set
+      p The initial GitHubArchive data set was wittled down in a series of steps. Over these steps the descriptions of all repos were extracted and tokenized while being kept stored with stargazer values.
+      p The end result is a distrobution of words that is keyed against each language that is small enough to fit in redis :)
+    .span4
+      h4 Results
       p Some more copy
   .row
     .span12

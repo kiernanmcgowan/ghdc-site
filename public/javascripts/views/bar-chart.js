@@ -39,7 +39,11 @@ module.exports = Backbone.View.extend({
   },
 
   createTitle: function() {
-    return (this.model.get('filter') || 'All Languages') + ' by ' + this.model.get('type');
+    if (!this.model.isLoaded) {
+      return '';
+    } else {
+      return (this.model.get('filter') || 'All Languages') + ' by ' + this.model.get('type');
+    }
   },
 
   updateTitle: function() {
@@ -49,8 +53,8 @@ module.exports = Backbone.View.extend({
   updateMeanMode: function() {
     var mm = this.model.get('mm');
     if (mm) {
-      this.$el.find('.mean').text('Mean: ' + mm.mean);
-      this.$el.find('.median').text('Median: ' + mm.median);
+      this.$el.find('.mean').text('Mean: ' + mm.mean.toFixed(2));
+      this.$el.find('.median').text('Median: ' + mm.median.toFixed(2));
     } else {
       // hide it if it is broken for some reason
       this.$el.find('.mean').text('');
@@ -60,7 +64,7 @@ module.exports = Backbone.View.extend({
 
   modelSynced: function() {
     this.modelIsFetching = false;
-    console.log('model loaded');
+    this.updateTitle();
     this.drawChart($(this.el).find('.chartLocation')[0]);
     // dont need to listen any more
     this.model.off('sync', this.modelSynced);
