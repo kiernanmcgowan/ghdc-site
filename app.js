@@ -71,10 +71,12 @@ io.sockets.on('connection', function(socket) {
       data.getLang(function(err, res) {
         cb(err, res);
       });
+    } else if (payload.type == 'suggestion') {
+      data.getSuggestion(payload.data, function(err, res) {
+        cb(err, res);
+      });
     } else {
       cb({err: 'unknown type: ' + payload.type});
     }
-
-
   });
 });

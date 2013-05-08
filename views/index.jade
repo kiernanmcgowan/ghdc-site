@@ -2,10 +2,26 @@ extends layout
 
 block content
   .row
-    .hero-unit.span12
-      h1 Analysis of value statments of GitHub repos
-      small Text analytics for men
+    .span12
+      .hero-unit
+        h1 Analysis of value statments of GitHub repos
+        small Text analytics for men
   .row
-    .span2#filter
-    .span5#weight
-    .span45#count
+    .span3
+      p Collapseable copy explaining the project, and giving a way for people to get an overview
+    .span3
+      p Some more copy
+    .span3
+      p Some more copy
+  .row
+    .span12
+      h3 How does your repo stand up?
+    .span6
+      #suggest
+    .span6
+      #filter
+  .row
+    .span6
+      #chartOutput
+    .span6
+      #weight

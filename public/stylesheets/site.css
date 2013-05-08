@@ -10,3 +10,9 @@
 .ui-helper-hidden-accessible {
   display: none;
 }
+textarea {
+  resize: none;
+}
+legend {
+  line-height: 36px;
+}

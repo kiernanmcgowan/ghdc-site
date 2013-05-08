@@ -10,69 +10,44 @@ module.exports = Backbone.View.extend({
 
   filter: null,
 
-  events: {
-    'switch-change .switch': 'changeWeight'
-  },
-
   initialize: function() {
 
   },
 
   render: function() {
+    var self = this;
+
     // draw the area around the chart
     $(this.el).html(this.template({
-      name: (this.filter || 'All Languages'),
-      type: 'By ' + this.model.get('type')
+      title: this.createTitle()
     }));
 
-    this.$el.find('.switch').bootstrapSwitch('setState', (this.model.get('type') === 'weight'));
-
-    var self = this;
+    this.model.on('change:filter change:type', function() {
+      self.updateTitle();
+    });
 
     if (this.model.isLoaded) {
       this.drawChart($(self.el).find('.chartLocation')[0]);
     } else {
       this.modelIsFetching = true;
-      this.showLoader();
       this.model.on('sync', this.modelSynced, this);
     }
   },
 
+  createTitle: function() {
+    return (this.model.get('filter') || 'All Languages') + ' by ' + this.model.get('type');
+  },
+
+  updateTitle: function() {
+    this.$el.find('.title').text(this.createTitle());
+  },
+
   modelSynced: function() {
     this.modelIsFetching = false;
-    this.hideLoader();
     console.log('model loaded');
     this.drawChart($(this.el).find('.chartLocation')[0]);
     // dont need to listen any more
     this.model.off('sync', this.modelSynced);
-  },
-
-  changeWeight: function() {
-    if (this.model.get('type') === 'count') {
-      this.model.set('type', 'weight');
-    } else {
-      this.model.set('type', 'count');
-    }
-    this.showLoader();
-    this.model.fetch();
-    this.$el.find('.small').text('By ' + this.model.get('type'));
-  },
-
-  changeFilter: function(filter) {
-    this.model.set('filter', filter);
-    this.showLoader();
-    this.model.fetch();
-    this.$el.find('.small').text((filter || 'All Languages'));
-  },
-
-  showLoader: function() {
-    this.$el.find('.loader').css('display', 'inline-block');
-    this.$el.find('.switch').bootstrapSwitch('setActive', false);
-  },
-
-  hideLoader: function() {
-    this.$el.find('.loader').css('display', 'none');
-    this.$el.find('.switch').bootstrapSwitch('setActive', true);
   },
 
   drawChart: function(loc) {
@@ -99,8 +74,8 @@ module.exports = Backbone.View.extend({
         .range([height, 0]);
 
     x.domain(data.map(function(d) { return d.word; }));
-    y.domain([d3.min(data, function(d) { return d.count; }) * 0.7,
-              d3.max(data, function(d) { return d.count; })]);
+    y.domain([d3.min(data, function(d) { return d.count * 0.7; }),
+              d3.max(data, function(d) { return d.count * 1; })]);
 
     var formatAsPercentage = d3.format('s');
 
@@ -156,14 +131,12 @@ module.exports = Backbone.View.extend({
     var self = this;
     this.model.on('change:list', function() {
 
-      self.hideLoader();
-
       var data = self.model.get('list');
       self.bars = self.bars.data(data);
 
-      // update the domain
-      y.domain([d3.min(data, function(d) { return d.count; }) * 0.7,
-                d3.max(data, function(d) { return d.count; })]);
+      // update the domain - make sure to cast to num
+      y.domain([d3.min(data, function(d) { return d.count * 0.7; }),
+                d3.max(data, function(d) { return d.count * 1; })]);
 
       self.bars.transition().duration(1000).attrTween('height', function(a) {
         var i = d3.interpolate(this._currentH, height - y(a.count));

@@ -3,6 +3,7 @@ var socket = io.connect('http://localhost');
 var Backbone = require('backbone');
 
 module.exports = function(method, model, opts) {
+  model.trigger('request');
   socket.emit('model-sync', {
     method: method,
     type: model.url,

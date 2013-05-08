@@ -15,9 +15,11 @@ module.exports = Backbone.View.extend({
     // now load our data - stay in full scope
     var listModel = require('../models/word-list');
     this.weightList = new listModel({type: 'weight', filter: this.currentScope});
-    this.countList = new listModel({type: 'count', filter: this.currentScope});
-    this.weightList.fetch();
-    this.countList.fetch();
+    //this.weightList.fetch();
+
+    var sugg = require('../models/suggestion');
+    // the model to handle suggestions to server
+    this.suggestion = new sugg();
 
     // filter list
     var filterList = require('../models/filter-list');
@@ -28,9 +30,21 @@ module.exports = Backbone.View.extend({
     var barChart = require('../views/bar-chart');
     var pieChart = require('../views/pie-chart');
     var filterView = require('../views/filter');
+    var suggestView = require('../views/suggestion');
+    var suggestChartView = require('../views/suggestion-chart');
 
+
+    var self = this;
+    this.suggestion.on('change:filter change:type', function() {
+      self.weightList.set('filter', self.suggestion.get('filter'));
+      self.weightList.set('type', self.suggestion.get('type'));
+      self.weightList.fetch();
+    });
+
+    console.log(this.suggestion);
     var filter = new filterView({
-      el: '#filter'
+      el: '#filter',
+      model: this.suggestion
     });
     filter.render();
 
@@ -40,11 +54,17 @@ module.exports = Backbone.View.extend({
     });
     weightChart.render();
 
-    var countChart = new barChart({
-      model: this.countList,
-      el: '#count'
+    var suggest = new suggestView({
+      model: this.suggestion,
+      el: '#suggest'
     });
-    countChart.render();
+    suggest.render();
+
+    var suggestChart = new suggestChartView({
+      model: this.suggestion,
+      el: '#chartOutput'
+    });
+    suggestChart.render();
   }
 
 });

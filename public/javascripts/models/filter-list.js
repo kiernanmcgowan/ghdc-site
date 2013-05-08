@@ -21,7 +21,6 @@ var model = Backbone.Model.extend({
         dispWords.push(word);
       }
     });
-    console.log(dispWords);
     return dispWords;
   }
 
