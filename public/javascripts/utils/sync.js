@@ -1,5 +1,5 @@
 // backbone-sync
-var socket = io.connect('http://localhost');
+var socket = io.connect(CONFIG['serverloc']);
 var Backbone = require('backbone');
 
 module.exports = function(method, model, opts) {

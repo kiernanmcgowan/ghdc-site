@@ -51,6 +51,16 @@ app.get('/d3.js', function(req, res) {
   res.sendfile(path.dirname(d3Loc) + '/d3.js');
 });
 
+app.get('/config.js', function(req, res) {
+  var obj = {};
+  if (process.env.aws) {
+    obj['serverloc'] = 'http://23.21.45.151';
+  } else {
+    obj['serverloc'] = 'http://localhost';
+  }
+  res.send('this.CONFIG = ' + JSON.stringify(obj));
+});
+
 var server = http.createServer(app).listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });

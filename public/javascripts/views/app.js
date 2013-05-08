@@ -41,7 +41,6 @@ module.exports = Backbone.View.extend({
       self.weightList.fetch();
     });
 
-    console.log(this.suggestion);
     var filter = new filterView({
       el: '#filter',
       model: this.suggestion
