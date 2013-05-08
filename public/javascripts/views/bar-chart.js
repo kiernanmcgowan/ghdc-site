@@ -26,6 +26,10 @@ module.exports = Backbone.View.extend({
       self.updateTitle();
     });
 
+    this.model.on('change:mm', function() {
+      self.updateMeanMode();
+    });
+
     if (this.model.isLoaded) {
       this.drawChart($(self.el).find('.chartLocation')[0]);
     } else {
@@ -40,6 +44,18 @@ module.exports = Backbone.View.extend({
 
   updateTitle: function() {
     this.$el.find('.title').text(this.createTitle());
+  },
+
+  updateMeanMode: function() {
+    var mm = this.model.get('mm');
+    if (mm) {
+      this.$el.find('.mean').text('Mean: ' + mm.mean);
+      this.$el.find('.median').text('Median: ' + mm.median);
+    } else {
+      // hide it if it is broken for some reason
+      this.$el.find('.mean').text('');
+      this.$el.find('.median').text('');
+    }
   },
 
   modelSynced: function() {
@@ -112,7 +128,7 @@ module.exports = Backbone.View.extend({
           this._currentH = height - y(d.count);
         });
 
-      this.labels = svg.append('g')
+    this.labels = svg.append('g')
         .attr('class', 'axis axis-x')
         .attr('transform', 'translate(0,' + height + ')')
         .call(xAxis)

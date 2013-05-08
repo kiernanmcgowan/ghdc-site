@@ -26,8 +26,17 @@ module.exports = Backbone.View.extend({
     // clean it out
     tbody.empty();
     var self = this;
+    var mm = this.model.get('mm');
+    console.log(mm);
     _.each(output, function(obj) {
-      console.log(obj.val);
+      obj.res = '';
+      if (mm) {
+        if (obj.val > mm.mean) {
+          obj.res = 'success';
+        } else if (obj.val < mm.median) {
+          obj.res = 'error';
+        }
+      }
       tbody.append($(self.lineTemplate(obj)));
     });
   }

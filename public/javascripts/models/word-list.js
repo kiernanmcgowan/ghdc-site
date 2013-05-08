@@ -14,13 +14,7 @@ module.exports = Backbone.Model.extend({
   },
 
   calcAverage: function() {
-    var avg = 0;
-    var list = this.get('list');
-    _.each(list, function(obj) {
-      avg += obj.count;
-    });
-    avg = avg / list.length;
-    this.set('average', avg);
+    console.log(this.get('mm'));
   }
 
 });

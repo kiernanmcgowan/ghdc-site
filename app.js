@@ -61,7 +61,6 @@ var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function(socket) {
   socket.on('model-sync', function(payload, cb) {
-    console.log(payload);
     if (payload.type === 'data') {
       data.getTopWords(payload.data, function(err, res) {
         console.log('calling back');

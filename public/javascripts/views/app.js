@@ -15,7 +15,7 @@ module.exports = Backbone.View.extend({
     // now load our data - stay in full scope
     var listModel = require('../models/word-list');
     this.weightList = new listModel({type: 'weight', filter: this.currentScope});
-    //this.weightList.fetch();
+    this.weightList.fetch();
 
     var sugg = require('../models/suggestion');
     // the model to handle suggestions to server
