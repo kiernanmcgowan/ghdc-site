@@ -59,8 +59,8 @@ module.exports = Backbone.View.extend({
   updateMeanMode: function() {
     var mm = this.model.get('mm');
     if (mm) {
-      this.$el.find('.mean').text('Mean: ' + mm.mean.toFixed(2));
-      this.$el.find('.median').text('Median: ' + mm.median.toFixed(2));
+      this.$el.find('.mean').text('Mean: ' + mm.mean.toFixed(2) + ' stars');
+      this.$el.find('.median').text('Median: ' + mm.median.toFixed(2) + ' stars');
     } else {
       // hide it if it is broken for some reason
       this.$el.find('.mean').text('');
@@ -97,6 +97,9 @@ module.exports = Backbone.View.extend({
       if (localCount >= repeat) {
         localCount = 0;
         colorIndex++;
+      }
+      if (colorIndex >= baseColors.length) {
+        colorIndex = baseColors.length - 1;
       }
       colors.push(baseColors[colorIndex]);
     }

@@ -36,15 +36,6 @@ module.exports = Backbone.View.extend({
     _.each(output, function(obj) {
       obj.res = '';
       obj.title = '';
-      if (mm) {
-        if (obj.val > mm.mean) {
-          obj.res = 'success';
-          obj.title = 'This word is above the mean, it should be helpful!';
-        } else if (obj.val < mm.median) {
-          obj.res = 'error';
-          obj.title = 'This word is below the median, try and find a better one!';
-        }
-      }
       tbody.append($(self.lineTemplate(obj)));
     });
 

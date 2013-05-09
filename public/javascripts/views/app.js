@@ -13,8 +13,8 @@ module.exports = Backbone.View.extend({
     require('../utils/sync');
 
     // now load our data - stay in full scope
-    var listModel = require('../models/word-list');
-    this.weightList = new listModel({filter: this.currentScope, count: 10});
+    this.listModel = require('../models/word-list');
+    this.weightList = new this.listModel({filter: this.currentScope, count: 10});
     this.weightList.fetch();
 
     var sugg = require('../models/suggestion');
@@ -27,7 +27,7 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     // load up the views with the current scope
-    var barChart = require('../views/bar-chart');
+    this.barChart = require('../views/bar-chart');
     var pieChart = require('../views/pie-chart');
     var filterView = require('../views/filter');
     var suggestView = require('../views/suggestion');
@@ -42,54 +42,35 @@ module.exports = Backbone.View.extend({
     });
 
     // create the overview chart
-    var listModel = require('../models/word-list');
-    var allMod = new listModel({count: 15});
-    var allChart = new barChart({
-      model: allMod,
-      el: '#all'
-    });
-    allChart.render();
-    allMod.fetch();
+    this.renderChartSet([{filter: null, loc: '#all'}], 15);
 
-    var jsMod = new listModel({count: 10, filter: 'JavaScript'});
-    var jsChart = new barChart({
-      model: jsMod,
-      el: '#js'
-    });
-    jsChart.render();
-    jsMod.fetch();
+    var self = this;
+    setTimeout(function() {
+      // web
+      self.renderChartSet([
+        {filter: 'JavaScript', loc: '#js'},
+        {filter: 'Ruby', loc: '#ruby'},
+        {filter: 'PHP', loc: '#php'}
+        ], 10);
+    }, 500);
 
-    var rubyMod = new listModel({count: 10, filter: 'Ruby'});
-    var rubyChart = new barChart({
-      model: rubyMod,
-      el: '#ruby'
-    });
-    rubyChart.render();
-    rubyMod.fetch();
+    setTimeout(function() {
+      // lisp
+      self.renderChartSet([
+        {filter: 'C', loc: '#c'},
+        {filter: 'C++', loc: '#cpp'},
+        {filter: 'C#', loc: '#csharpe'}
+        ], 8);
+    }, 1000);
 
-    var phpMod = new listModel({count: 10, filter: 'PHP'});
-    var phpChart = new barChart({
-      model: phpMod,
-      el: '#php'
-    });
-    phpChart.render();
-    phpMod.fetch();
-
-    var coffeescriptMod = new listModel({count: 15, filter: 'CoffeeScript'});
-    var coffeescriptChart = new barChart({
-      model: coffeescriptMod,
-      el: '#cs'
-    });
-    coffeescriptChart.render();
-    coffeescriptMod.fetch();
-
-    var broMod = new listModel({count: 15, filter: 'Bro'});
-    var broChart = new barChart({
-      model: broMod,
-      el: '#bro'
-    });
-    broChart.render();
-    broMod.fetch();
+    setTimeout(function() {
+      self.renderChartSet([
+        {filter: 'CoffeeScript', loc: '#cs'},
+        {filter: 'Rust', loc: '#rust'},
+        {filter: 'Bro', loc: '#bro'},
+        {filter: 'Java', loc: '#java'}
+        ], 5);
+    }, 2000);
 
     // bottom ui
     var filter = new filterView({
@@ -98,7 +79,7 @@ module.exports = Backbone.View.extend({
     });
     filter.render();
 
-    var weightChart = new barChart({
+    var weightChart = new this.barChart({
       model: this.weightList,
       el: '#weight'
     });
@@ -115,6 +96,20 @@ module.exports = Backbone.View.extend({
       el: '#chartOutput'
     });
     suggestChart.render();
+  },
+
+  renderChartSet: function(chartSet, count) {
+    var self = this;
+    _.each(chartSet, function(obj) {
+      var mod = new self.listModel({count: count, filter: obj.filter});
+      var chart = new self.barChart({
+        model: mod,
+        el: obj.loc
+      });
+      chart.render();
+      mod.fetch();
+    });
+
   }
 
 });
