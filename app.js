@@ -54,7 +54,7 @@ app.get('/d3.js', function(req, res) {
 app.get('/config.js', function(req, res) {
   var obj = {};
   if (process.env.aws) {
-    obj['serverloc'] = 'http://23.21.45.151';
+    obj['serverloc'] = 'http://dropdownmenu.name';
   } else {
     obj['serverloc'] = 'http://localhost';
   }
