@@ -57,10 +57,10 @@ module.exports = Backbone.View.extend({
   },
 
   changeType: function(evt) {
-    var newType = $(evt.target).val();
-    this.model.set('type', newType);
+    //var newType = $(evt.target).val();
+    //this.model.set('type', newType);
     // and update!
-    this.model.fetch();
+    //this.model.fetch();
   }
 
 });

@@ -11,7 +11,7 @@ module.exports = Backbone.Model.extend({
   defaults: {
     input: null,
     output: null,
-    type: 'weight',
+    //type: 'weight',
     filter: null
   },
 

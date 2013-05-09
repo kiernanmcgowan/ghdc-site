@@ -11,7 +11,6 @@ module.exports = Backbone.View.extend({
   filter: null,
 
   initialize: function() {
-
   },
 
   render: function() {
@@ -21,6 +20,8 @@ module.exports = Backbone.View.extend({
     $(this.el).html(this.template({
       title: this.createTitle()
     }));
+
+    this.width = this.$el.width() - 60;
 
     this.model.on('change:filter change:type', function() {
       self.updateTitle();
@@ -35,15 +36,20 @@ module.exports = Backbone.View.extend({
     } else {
       this.modelIsFetching = true;
       this.model.on('sync', this.modelSynced, this);
+      this.showLoader();
     }
   },
 
+  showLoader: function() {
+    this.$el.find('.loader').css('display', 'inline-block');
+  },
+
+  hideLoader: function() {
+    this.$el.find('.loader').css('display', 'none');
+  },
+
   createTitle: function() {
-    if (!this.model.isLoaded) {
-      return '';
-    } else {
-      return (this.model.get('filter') || 'All Languages') + ' by ' + this.model.get('type');
-    }
+    return (this.model.get('filter') || 'All Languages');// + ' by ' + this.model.get('type');
   },
 
   updateTitle: function() {
@@ -65,13 +71,16 @@ module.exports = Backbone.View.extend({
   modelSynced: function() {
     this.modelIsFetching = false;
     this.updateTitle();
+    this.hideLoader();
     this.drawChart($(this.el).find('.chartLocation')[0]);
     // dont need to listen any more
     this.model.off('sync', this.modelSynced);
   },
 
   drawChart: function(loc) {
-    var colors = [
+    var data = this.model.get('list');
+
+    var baseColors = [
         '#FF9900',
         '#DD7700',
         '#6699CC',
@@ -80,9 +89,19 @@ module.exports = Backbone.View.extend({
         '#9C9284'
     ];
 
-    var data = this.model.get('list');
+    var colors = [];
+    var localCount = 0;
+    var colorIndex = 0;
+    var repeat = Math.floor(data.length / 5);
+    for (var i = 0; i < data.length; i++, localCount++) {
+      if (localCount >= repeat) {
+        localCount = 0;
+        colorIndex++;
+      }
+      colors.push(baseColors[colorIndex]);
+    }
 
-    var width = 300;
+    var width = this.width;
     var height = 200;
     var barPadding = 5;
     var margin = {top: 50, right: 20, bottom: 30, left: 40};
@@ -93,8 +112,14 @@ module.exports = Backbone.View.extend({
     var y = d3.scale.linear()
         .range([height, 0]);
 
+    var incomplete = this.model.get('incomplete');
+    var minScale = 0.7;
+    if (incomplete) {
+      minScale = 1;
+    }
+
     x.domain(data.map(function(d) { return d.word; }));
-    y.domain([d3.min(data, function(d) { return d.count * 0.7; }),
+    y.domain([d3.min(data, function(d) { return d.count * minScale; }),
               d3.max(data, function(d) { return d.count * 1; })]);
 
     var formatAsPercentage = d3.format('s');
@@ -118,9 +143,17 @@ module.exports = Backbone.View.extend({
         .attr('class', 'axis axis-y')
         .call(yAxis);
 
+    var filter = (this.model.get('filter') || '');
+
     this.bars = svg.selectAll('.bar')
         .data(data)
-        .enter().append('rect')
+        .enter()
+
+        .append('svg:a')
+        .attr('target', '_blank')
+        .attr('xlink:href', function(d) { return 'https://github.com/search?type=Repositories&q=' + d.word + '+' + filter; })
+
+        .append('rect')
         .attr('class', 'bar')
         .attr('x', function(d) { return x(d.word); })
         .attr('width', x.rangeBand())
@@ -154,8 +187,14 @@ module.exports = Backbone.View.extend({
       var data = self.model.get('list');
       self.bars = self.bars.data(data);
 
+      var incomplete = self.model.get('incomplete');
+      var minScale = 0.7;
+      if (incomplete) {
+        minScale = 1;
+      }
+
       // update the domain - make sure to cast to num
-      y.domain([d3.min(data, function(d) { return d.count * 0.7; }),
+      y.domain([d3.min(data, function(d) { return d.count * minScale; }),
                 d3.max(data, function(d) { return d.count * 1; })]);
 
       self.bars.transition().duration(1000).attrTween('height', function(a) {

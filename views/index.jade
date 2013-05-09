@@ -4,22 +4,47 @@ block content
   .row
     .span12
       .hero-unit
-        h1 What is important to GitHub?
-        small An interactive demo of how repository descriptions change with language
+        h1 What's in a name?
+        small A look into GitHub's repo descriptions
   .row
-    .span4
-      h4 Overview
-      p Taking the large amount of data from the GitHubArchive project,
-    .span4
-      h4 Data set
-      p The initial GitHubArchive data set was wittled down in a series of steps. Over these steps the descriptions of all repos were extracted and tokenized while being kept stored with stargazer values.
-      p The end result is a distrobution of words that is keyed against each language that is small enough to fit in redis :)
-    .span4
-      h4 Results
-      p Some more copy
+    .span6
+      h3 Overview
+      p Most repos on GitHub have a short description that give an overview of the repo. When browsing GitHub you are only ever viewing one description at a time. What if all of these descriptions were pulled together, tokenized, and grouped by language?
+    .span6
+      h3 Data set
+      p This project did just that and, with a little magic from d3 and redis, can lets us see what makes certain languages tick. For each language we can view a weighted average terms in a description based on the number of stargazers for that repo. By doing so some interesting conclusions can be draw.
   .row
     .span12
-      h3 How does your repo stand up?
+      h1 A look at GitHub overall
+      small Values are total number of stars per word
+    .span12
+      #all
+    .span12
+      p.lead We can tell that GitHub is nothing more than a library of javascript frameworks.
+      p Or is it a simple node based api?
+      p Ruby on rails plugin for a nodejs framework that uses a simple web based api?
+  .row
+    .span12
+      h1 On the web
+  .row
+    .span4
+      #js
+    .span4
+      #php
+    .span4
+      #ruby
+  .row
+    .span4
+      p Horray node!
+    .span4
+      p Lol PHP!
+    .span4
+      p Wtf is Ruby?
+
+  .row
+    .span12
+      h1 How does your repo stand up?
+      p Enter the description of your repository to see how it compares with the rest of GitHub!
     .span6
       #suggest
     .span6

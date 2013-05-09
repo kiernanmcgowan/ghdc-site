@@ -9,12 +9,13 @@ module.exports = Backbone.Model.extend({
 
   sync: require('../utils/sync'),
 
-  initialize: function() {
-    this.on('change:list', this.calcAverage, this);
+  defaults: {
+    type: 'weight',
+    filter: null,
+    count: 5
   },
 
-  calcAverage: function() {
-    console.log(this.get('mm'));
+  initialize: function() {
   }
 
 });
