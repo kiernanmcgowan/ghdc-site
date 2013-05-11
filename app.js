@@ -69,6 +69,10 @@ var server = http.createServer(app).listen(app.get('port'), function() {
 // sockets away!
 var io = require('socket.io').listen(server);
 
+io.configure(function() {
+  io.set('transports', ['htmlfile', 'xhr-polling', 'jsonp-polling']);
+});
+
 io.sockets.on('connection', function(socket) {
   socket.on('model-sync', function(payload, cb) {
     if (payload.type === 'data') {
